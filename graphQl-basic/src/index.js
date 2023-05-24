@@ -40,11 +40,14 @@ const posts = [
 const comment =[{
     id:'2',
     textField:'Nice Book',
-    author:'1'
+    author:'1',
+    post:'12'
 },{
     id:'3',
     textField:"Amazing Movie",
-    author:'2'
+    author:'2',
+    post:'121'
+
 }]
 
 // Type Definition
@@ -77,12 +80,14 @@ const typeDefs = gql`
     body: String!
     published: String!
     author: User!
+    comments:[Comment!]!
   }
 
   type Comment{
   id:ID!
   textField:String!
   author:User!
+  post:Post!
   }
 `;
 
@@ -160,6 +165,12 @@ const resolvers = {
         return user.id === parent.author;
       });
     },
+    comments(parent,args,context,info){
+        return comment.filter((comment)=>{
+            return comment.post===parent.id
+        })
+
+    }
   },
   User: {
     posts(parent, args, context, info) {
@@ -172,12 +183,18 @@ const resolvers = {
             return comment.author===parent.id;
         })
 
-    }
+    },
+
   },
   Comment:{
     author(parent,args,context,info){
         return users.find((user)=>{
             return user.id===parent.author;
+        })
+    },
+    post(parent,args,context,info){
+        return posts.find((post)=>{
+            return post.id===parent.post;
         })
     }
   }
