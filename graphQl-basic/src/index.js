@@ -4,15 +4,35 @@ import gql from 'graphql-tag';
 import mongoose from 'mongoose';
 import { MONGO_URL } from '../config.js';
 import User from './schema/model.js';
+
+
+const users=[{
+    id:'1',
+    name:"Anand",
+    email:"anandkushwaha70@gmail.com",
+    age:24
+},{
+    id:'2',
+    name:"Aditya",
+    email:"aditya70@gmail.com",
+    age:15
+}]
+
 // Type Definition
  const typeDefs=gql`
   
 
      type Query{
-    hello:String!
+     greeting(name: String!):String!
+     add(number:[Int!]):Int!
+     grade:[Int!]!
+     hello:String!
      name:String!
      age:Int!
      user:User
+     post:Post
+     me(query:String):[User!]!
+
      }
 
      type User{
@@ -22,6 +42,13 @@ import User from './schema/model.js';
      age:Int
      
      }
+
+     type Post{
+     id:ID!
+     title:String!
+     body:String!
+     published:String!
+     }
  `
 
 
@@ -30,6 +57,33 @@ import User from './schema/model.js';
 
 const resolvers={
     Query:{
+       greeting:(_,args,context, info)=>{
+        const {name}=args
+        if(name){
+            return `${name} Hello`
+        }else{
+            return 'Hello'
+        }
+       
+        
+       },
+       add:(_,args,context,info)=>{
+        const {number}=args;
+        console.log(number);
+        if(number.length ===0)
+        {
+            return 0;
+        }else{
+             
+            return number.reduce((acc,curr)=>{
+                return acc+curr;
+            })
+        }
+
+       },
+       grade:(_,args,context,info)=>{
+              return [99,23,12,1213,123]
+       },
        hello:()=>{
         return "this is my first query"
        },
@@ -46,6 +100,25 @@ const resolvers={
             email:"anandKushwaha70@gmail.com",
             age:24
           }
+       },
+       post:()=>{
+        return {
+            id:'231',
+            title:"A Book",
+            body:"This is my Story",
+            published:"12/1/2001"
+        }
+       },
+       me:(_,args,context,info)=>{
+
+          if(!args.query){
+            return users
+          }
+
+          return users.filter((user)=>{
+            return user.name.toLowerCase().includes(args.query.toLowerCase())
+          })
+
        }
 
     }
