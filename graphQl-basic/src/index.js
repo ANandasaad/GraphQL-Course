@@ -4,51 +4,13 @@ import gql from "graphql-tag";
 import mongoose from "mongoose";
 import { MONGO_URL } from "../config.js";
 import User from "./schema/model.js";
+import { users,comment,posts } from "../config.js";
 
-const users = [
-  {
-    id: "1",
-    name: "Anand",
-    email: "anandkushwaha70@gmail.com",
-    age: 24,
-  },
-  {
-    id: "2",
-    name: "Aditya",
-    email: "aditya70@gmail.com",
-    age: 15,
-  },
-];
 
-const posts = [
-  {
-    id: "12",
-    title: "A book",
-    body: "This is my Story",
-    published: "1/2/2002",
-    author: "1",
-  },
-  {
-    id: "121",
-    title: "A Women",
-    body: "The Mother",
-    published: "1/2/1900",
-    author: "2",
-  },
-];
 
-const comment =[{
-    id:'2',
-    textField:'Nice Book',
-    author:'1',
-    post:'12'
-},{
-    id:'3',
-    textField:"Amazing Movie",
-    author:'2',
-    post:'121'
 
-}]
+
+
 
 // Type Definition
 const typeDefs = gql`
