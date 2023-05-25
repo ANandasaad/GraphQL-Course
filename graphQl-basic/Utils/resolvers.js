@@ -1,5 +1,8 @@
 import { users,comment,posts } from "../config.js";
 import User from "../src/schema/User.js";
+import { GraphQLError } from 'graphql';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 const resolvers = {
@@ -73,9 +76,62 @@ const resolvers = {
         // const user = new User({
 
         // })
-        console.log(args);
+        const EmailTaken= users.some((user)=>user.email===args.email);
+        if(EmailTaken)
+        {
+          throw new GraphQLError("Email is already exists",{
+            extensions :{
+            code: "EMAIL_ALREADY_USED"
+            },
+          } );
+        }
+        const user={
+          id:uuidv4(),
+         ...args
+        }
+      users.push(user);
 
+      return user;
+       
 
+      },
+      createPost(_,args,context,info){
+
+        const titleTaken= posts.some((post)=>post.title===args.title);
+        if(titleTaken)
+        {
+          throw new GraphQLError('Title is already exist',{
+            extensions:{
+              code: "TITLE_ALREADY_EXISTS",
+            }
+          })
+        }
+        const post={
+          id:uuidv4(),
+          ...args
+        }
+        // console.log(args);
+        posts.push(post);
+        return post;
+      },
+      createComment(_,args,context,info){
+          const userTaken= comment.some((comment)=>comment.author===args.author);
+          const postTaken= comment.some((comment)=>comment.post===args.post);
+          if(userTaken || postTaken)
+          {
+            throw new GraphQLError("User is already exit",{
+              extensions:{
+                code :'USER_ALREADY_COMMENTED',
+              }
+            });
+          }
+          const comments={
+            id:uuidv4(),
+           ...args
+          }
+
+          comment.push(comments);
+          return comments;
       }
 
     },

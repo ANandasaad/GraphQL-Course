@@ -43,6 +43,8 @@ const typeDefs = gql`
 
   type Mutation{
   createUser(name:String!, email:String!, age:Int):User!
+  createPost(title:String!,body:String!, published:String!, author:ID!):Post!
+  createComment(textField:String!,author:ID!,post:ID!):Comment!
   }
 `;
 
