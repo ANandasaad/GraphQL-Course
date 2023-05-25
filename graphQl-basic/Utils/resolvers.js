@@ -135,8 +135,80 @@ const resolvers = {
 
           comment.push(comments);
           return comments;
+      },
+      deleteUser:(_,args,context,info)=>{
+        const userIndex=users.findIndex((user)=>{
+          return user.id===args.id
+        })
+
+        if(userIndex==-1){
+            throw new GraphQLError('User not found',{
+              extensions:{
+                code:'USER_NOT_FOUND',
+              }
+            })
+        }
+          const deletedUser= users.splice(userIndex,1);
+          posts=posts.filter((post)=>{
+           const match = post.author===args.id
+           if(match){
+            comment=comment.filter((comment)=>{
+              comment.post!==post.id
+            })
+           }
+           return !match;
+          }) 
+          comment=comment.filter((comment)=>{
+            comment.author!==args.id
+          })
+
+          return deletedUser[0];
+        
+      }
+      ,
+      updateUser:(_,args,context,info)=>{
+        const {id,input}=args;
+        const user=users.find((user)=>user.id===id)
+
+        if(!user)
+        {
+          throw new GraphQLError("User not Found",{
+            extensions:{
+              code:"USER_NOT_FOUND"
+            }
+          })
+        }
+
+        if(typeof input.email ==='string')
+        {
+          const emailTaken= users.some((user)=> user.email ===input.email)
+
+          if(emailTaken)
+          {
+            throw new GraphQLError("Email is already exist",{
+              extensions:{
+                code:"EMAIL_IS_ALREADY_EXIST"
+              }
+            })
+          }
+
+          user.email=input.email
+        }
+
+        if(typeof input.name==="string")
+        {
+          user.name=input.name
+        }
+
+        if(typeof input.age!=='undefined')
+        {
+          user.age=input.age
+        }
+
+        return user;
       }
 
+    
     },
     Post: {
       author(parent, args, context, info) {

@@ -45,10 +45,17 @@ const typeDefs = gql`
   createUser(input:createUserInput):User!
   createPost(title:String!,body:String!, published:String!, author:ID!):Post!
   createComment(textField:String!,author:ID!,post:ID!):Comment!
+  deleteUser(id:ID!):User!
+  updateUser(id:ID!, input:updateUserInput):User!
   }
   input createUserInput{
   name:String!
   email:String!
+  age:Int
+  }
+  input updateUserInput{
+  name:String
+  email:String
   age:Int
   }
 `;

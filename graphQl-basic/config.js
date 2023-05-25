@@ -1,6 +1,6 @@
 export const MONGO_URL="mongodb+srv://anandkushwaha:789aditya729A@cluster0.kd7udhp.mongodb.net/GraphQL?retryWrites=true&w=majority"
 
-export const users = [
+export let users = [
   {
     id: "1",
     name: "Anand",
@@ -13,9 +13,15 @@ export const users = [
     email: "aditya70@gmail.com",
     age: 15,
   },
+  {
+    id: "3",
+    name: "Aditya",
+    email: "aditya70@gmail.com",
+    age: 15,
+  }
 ];
 
-export const posts = [
+export let posts = [
   {
     id: "12",
     title: "A book",
@@ -32,7 +38,7 @@ export const posts = [
   },
 ];
 
-export const comment =[{
+export let comment =[{
     id:'2',
     textField:'Nice Book',
     author:'1',
