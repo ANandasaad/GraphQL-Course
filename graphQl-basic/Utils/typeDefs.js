@@ -10,7 +10,7 @@ const typeDefs = gql`
     hello: String!
     name: String!
     age: Int!
-    user: User
+    user: User!
     post: [Post!]!
     me(query: String): [User!]!
     comments:[Comment!]!
@@ -42,9 +42,14 @@ const typeDefs = gql`
   }
 
   type Mutation{
-  createUser(name:String!, email:String!, age:Int):User!
+  createUser(input:createUserInput):User!
   createPost(title:String!,body:String!, published:String!, author:ID!):Post!
   createComment(textField:String!,author:ID!,post:ID!):Comment!
+  }
+  input createUserInput{
+  name:String!
+  email:String!
+  age:Int
   }
 `;
 

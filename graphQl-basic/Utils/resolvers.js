@@ -44,6 +44,7 @@ const resolvers = {
           name: "Anand",
           email: "anandKushwaha70@gmail.com",
           age: 24,
+        
         };
       },
       post: () => {
@@ -76,7 +77,8 @@ const resolvers = {
         // const user = new User({
 
         // })
-        const EmailTaken= users.some((user)=>user.email===args.email);
+        console.log(args);
+        const EmailTaken= users.some((user)=>user.email===args.input.email);
         if(EmailTaken)
         {
           throw new GraphQLError("Email is already exists",{
@@ -87,7 +89,8 @@ const resolvers = {
         }
         const user={
           id:uuidv4(),
-         ...args
+         ...args.input
+           
         }
       users.push(user);
 
