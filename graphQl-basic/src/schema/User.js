@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const userSchema= mongoose.Schema({
-    id:Number,
+    
     name:String,
     email:String,
-    age:Number
-
+    age:Number,
+   
 
 })
 

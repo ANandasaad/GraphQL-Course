@@ -10,7 +10,7 @@ const typeDefs = gql`
     hello: String!
     name: String!
     age: Int!
-    user: User!
+    user: [User]!
     post: [Post!]!
     me(query: String): [User!]!
     comments:[Comment!]!
@@ -18,13 +18,13 @@ const typeDefs = gql`
   }
 
   type User {
-    id: ID!
+    id:ID
     name: String!
     email: String!
     age: Int
     posts: Post!
     comments:[Comment!]!
-  }
+  } 
 
   type Post {
     id: ID!

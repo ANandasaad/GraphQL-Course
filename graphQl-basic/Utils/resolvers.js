@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 import { PubSub } from "graphql-subscriptions";
 import Message from "../src/schema/Message.js";
+import Order from "../src/schema/Order.js";
 
 const pubsub= new PubSub();
 const resolvers = {
@@ -39,14 +40,21 @@ const resolvers = {
       age: () => {
         return 34;
       },
-      user: () => {
-        return {
-          id: "1234",
-          name: "Anand",
-          email: "anandKushwaha70@gmail.com",
-          age: 24,
-        
-        };
+      user: async () => {
+        try{
+          const res= await User.find().exec();
+          console.log(res +"Result");
+          return res;
+        }
+        catch(error){
+          console.log(error);
+          throw new GraphQLError(`Error ${error}`,{
+            extensions:{
+              code:"ERROR_"
+            }
+          })
+        }
+       
       },
       post: () => {
         return {
@@ -79,11 +87,7 @@ const resolvers = {
       }
     },
     Mutation:{
-      createUser(_,args,context,info){
-        // const user = new User({
-
-        // })
-        console.log(args);
+      createUser:async(_,args,context,info)=>{
         const EmailTaken= users.some((user)=>user.email===args.input.email);
         if(EmailTaken)
         {
@@ -93,14 +97,20 @@ const resolvers = {
             },
           } );
         }
-        const user={
-          id:uuidv4(),
-         ...args.input
-           
+        else{
+          const newUser= new User({
+            name:args.input.name,
+            email:args.input.email,
+            age:args.input.age
+          })
+  
+          const res= await newUser.save();
+          return {
+            id:res.id,
+            ...res._doc
+          }
         }
-      users.push(user);
 
-      return user;
        
 
       },
@@ -214,7 +224,7 @@ const resolvers = {
         return user;
       },
       createMessage: async (_,args)=>{
-        console.log("text"+ args.input.text);
+        // console.log("text"+ args.input.text);
         
         const newMessage = new Message({
           text:args.input.text,
