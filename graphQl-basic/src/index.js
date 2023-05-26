@@ -3,7 +3,6 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import mongoose from "mongoose";
 import { MONGO_URL } from "../config.js";
 import typeDefs from "../Utils/typeDefs.js";
-import resolvers from "../Utils/resolvers.js";
 import { PubSub } from "graphql-subscriptions";
 import {createServer} from 'http';
 import { makeExecutableSchema } from "@graphql-tools/schema";
@@ -14,15 +13,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { expressMiddleware } from '@apollo/server/express4';
-
-
+import resolvers from "../Utils/resolvers.js";
 
 // Create the schema, which will be used separately by ApolloServer and
 // the WebSocket server.
-
-
-
-
 
 const schema =makeExecutableSchema({typeDefs,resolvers});
 

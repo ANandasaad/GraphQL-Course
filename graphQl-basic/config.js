@@ -50,3 +50,5 @@ export let comment =[{
     post:'121'
 
 }]
+
+export const MESSAGE_CREATED='MESSAGE_CREATED';
