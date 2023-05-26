@@ -2,9 +2,10 @@ import { users,comment,posts } from "../config.js";
 import User from "../src/schema/User.js";
 import { GraphQLError } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
+import { PubSub } from "graphql-subscriptions";
+import Message from "../src/schema/Message.js";
 
-
-
+const pubsub= new PubSub();
 const resolvers = {
     Query: {
       greeting: (_, args, context, info) => {
@@ -70,6 +71,11 @@ const resolvers = {
       },
       comments:()=>{
           return comment;
+      },
+      message:()=>{
+       const mes= Message.find();
+        return mes;
+
       }
     },
     Mutation:{
@@ -206,6 +212,30 @@ const resolvers = {
         }
 
         return user;
+      },
+      createMessage: async (_,args)=>{
+        console.log("text"+ args.input.text);
+        
+        const newMessage = new Message({
+          text:args.input.text,
+          createdBy:args.input.username
+        });
+
+  
+        const res= await newMessage.save();
+        pubsub.publish('MESSAGE_CREATED',{
+          messageCreated:{
+            text:args.input.text,
+            createdBy:args.input.username
+          }
+        })
+  
+        return {
+          id:res.id,
+          ...res._doc
+        }
+  
+   
       }
 
     
@@ -249,6 +279,14 @@ const resolvers = {
           })
       }
     }
+    ,
+    Subscription:{
+      messageCreated:{
+       subscribe:()=>{
+        return  pubsub.asyncIterator(['MESSAGE_CREATED'])
+       }
+      }
+ }
     
   };
 

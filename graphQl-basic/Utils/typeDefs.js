@@ -14,6 +14,7 @@ const typeDefs = gql`
     post: [Post!]!
     me(query: String): [User!]!
     comments:[Comment!]!
+    message(id:ID):Message
   }
 
   type User {
@@ -47,6 +48,7 @@ const typeDefs = gql`
   createComment(textField:String!,author:ID!,post:ID!):Comment!
   deleteUser(id:ID!):User!
   updateUser(id:ID!, input:updateUserInput):User!
+  createMessage(input:createMessageInput):Message!
   }
   input createUserInput{
   name:String!
@@ -57,6 +59,20 @@ const typeDefs = gql`
   name:String
   email:String
   age:Int
+  }
+
+
+  type Subscription{
+    messageCreated:Message
+  }
+
+  type Message{
+  text:String!
+  createdBy:String!
+  }
+  input createMessageInput{
+  text:String
+  username:String
   }
 `;
 
