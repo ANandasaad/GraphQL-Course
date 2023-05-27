@@ -64,6 +64,8 @@ const typeDefs = gql`
 
   type Subscription{
     messageCreated:Message
+    commentCreated:Comment
+    postCreated:Post
   }
 
   type Message{

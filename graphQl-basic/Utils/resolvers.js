@@ -5,7 +5,6 @@ import Message from "../src/schema/Message.js";
 import { GraphQLError } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 
-
 const pubsub= new PubSub();
 
 const resolvers= {
@@ -130,14 +129,23 @@ const resolvers= {
         id:uuidv4(),
         ...args
       }
-      // console.log(args);
+      console.log(args);
+
       posts.push(post);
+      pubsub.publish('PUBLISHED',{
+        postCreated:{
+          title:args.title,
+          body:args.body,
+          published:args.published,
+          author:args.author
+        }
+      })
       return post;
     },
     createComment(_,args,context,info){
         const userTaken= comment.some((comment)=>comment.author===args.author);
-        const postTaken= comment.some((comment)=>comment.post===args.post);
-        if(userTaken || postTaken)
+        // const postTaken= comment.some((comment)=>comment.post===args.post);
+        if(userTaken)
         {
           throw new GraphQLError("User is already exit",{
             extensions:{
@@ -145,12 +153,21 @@ const resolvers= {
             }
           });
         }
+        console.log(args.textField);
         const comments={
           id:uuidv4(),
-         ...args
+          ...args
+
         }
 
         comment.push(comments);
+        pubsub.publish('COMMENT',{
+          commentCreated:{
+             textField:args.textField,
+             
+             
+          }
+        })
         return comments;
     },
     deleteUser:(_,args,context,info)=>{
@@ -234,12 +251,15 @@ const resolvers= {
 
 
       const res= await newMessage.save();
-      pubsub.publish('MESSAGE_CREATED',{
-        messageCreated:{
-          text:args.input.text,
-          createdBy:args.input.username
-        }
-      })
+      setTimeout(()=>{
+        pubsub.publish('MESSAGE_CREATED',{
+            messageCreated:{
+              text:args.input.text,
+              createdBy:args.input.username
+            }
+          })
+      },2000);
+     
 
       return {
         id:res.id,
@@ -256,7 +276,17 @@ const resolvers= {
         subscribe:()=>{
          return  pubsub.asyncIterator(['MESSAGE_CREATED'])
         }
-       }
+       },
+    commentCreated:{
+      subscribe:()=>{
+        return pubsub.asyncIterator(['COMMENT'])
+      }
+    },
+    postCreated:{
+      subscribe:()=>{
+        return pubsub.asyncIterator(['PUBLISHED'])
+      }
+    }   
   },
   User:{
     posts(parent, args, context, info) {
